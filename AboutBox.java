@@ -1,6 +1,6 @@
 /*    
     Copyright (C) Paul Falstad and Iain Sharp
-    Tweaked by Vinyasi on 17/Jun/2017 10:17
+    Tweaked by Vinyasi on 17/Jun/2017 14:26
     
     This file is part of CircuitJS1.
 
@@ -68,7 +68,7 @@ public class AboutBox extends PopupPanel {
 		"<p style=\"font-size:9px\">For details of licensing see <A href=\"http://www.gnu.org/licenses/\" target=\"_blank\">http://www.gnu.org/licenses/</A>.</p>"+
 		"<p style=\"font-size:9px\">Source code (Paul):<A href=\"https://github.com/pfalstad/circuitjs1\" target=\"_blank\">https://github.com/pfalstad/circuitjs1</A></p>"+
 	    "<p style=\"font-size:9px\">Source code (Iain):<A href=\"https://github.com/sharpie7/circuitjs1\" target=\"_blank\">https://github.com/sharpie7/circuitjs1</A></p>"+
-	    "<p style=\"font-size:9px\">Tweaked for two circuit menus (Vinyasi):<A href=\"https://github.com/Vinyasi/circuitjs1-falstad-vinyasi\" target=\"_blank\">https://github.com/Vinyasi/circuitjs1-falstad-vinyasi</A></p>"));
+	    "<p style=\"font-size:9px\">Tweak code (Vinyasi):<A href=\"https://github.com/Vinyasi/circuitjs1-falstad-vinyasi\" target=\"_blank\">https://github.com/Vinyasi/circuitjs1-falstad-vinyasi</A></p>"));
 		
 		
 		vp.add(okButton = new Button("OK"));
