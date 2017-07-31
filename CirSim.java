@@ -2,9 +2,18 @@
     Copyright (C) Paul Falstad and Iain Sharp
     This file is part of CircuitJS1.
 
-    Modified by Vinyasi, 16/Jun/2017 18:45
-// TweakStart
-// TweakEnd
+    Version 4 by Vinyasi, 31/Jul/2017 9:09
+
+// Mod.Begin
+// Mod.End
+
+    This file is part of Vinyasi's port of CircuitJS1 specializing in
+    Surge Circuits exhibiting Pure Resonance, aka Overunity and Free
+    Energy. See, Prof. Arthur Mattuck on YouTube and MIT Open Course 
+    Ware. Also, Mathlets.org has a dynamic plot in JavaScript called: 
+    Poles and Vibrations which comes closest to what I attempt to 
+    engineer in all of my simulations whether or not I succeed.
+    http://mathlets.org/mathlets/poles-and-vibrations/
 
     CircuitJS1 is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -90,7 +99,9 @@ import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.Window.Navigator;
-
+// Mod.Begin
+//import java.util.Arrays;
+// Mod.End
 
 public class CirSim implements MouseDownHandler, MouseMoveHandler, MouseUpHandler,
 ClickHandler, DoubleClickHandler, ContextMenuHandler, NativePreviewHandler,
@@ -104,6 +115,9 @@ MouseOutHandler, MouseWheelHandler {
     // IES - remove interaction
     Button resetButton;
     Button runStopButton;
+// Mod.Begin
+    Button diffEqButton;
+// Mod.End
     Button dumpMatrixButton;
     MenuItem aboutItem;
     MenuItem importFromLocalFileItem, importFromTextItem,
@@ -126,7 +140,7 @@ MouseOutHandler, MouseWheelHandler {
     private Label powerLabel;
     private Label titleLabel;
     private Scrollbar speedBar;
-   private Scrollbar currentBar;
+    private Scrollbar currentBar;
     private Scrollbar powerBar;
     MenuBar elmMenuBar;
     MenuItem elmEditMenuItem;
@@ -226,6 +240,9 @@ MouseOutHandler, MouseWheelHandler {
     RowInfo circuitRowInfo[];
     int circuitPermute[];
     boolean simRunning;
+// Mod.Begin
+//    boolean DiffEqBoxClosed;
+// Mod.End
     boolean circuitNonLinear;
     int voltageSourceCount;
     int circuitMatrixSize, circuitMatrixFullSize;
@@ -234,7 +251,7 @@ MouseOutHandler, MouseWheelHandler {
     int scopeCount;
     Scope scopes[];
     boolean showResistanceInVoltageSources;
-   int scopeColCount[];
+    int scopeColCount[];
     static EditDialog editDialog, customLogicEditDialog;
     static ExportAsUrlDialog exportAsUrlDialog;
     static ExportAsTextDialog exportAsTextDialog;
@@ -244,6 +261,13 @@ MouseOutHandler, MouseWheelHandler {
     static ExportToDropbox exportToDropbox;
     static ScrollValuePopup scrollValuePopup;
     static AboutBox aboutBox;
+// Mod.Begin
+    static AboutDiffEqBox aboutDiffEq;
+//    static FalstadCircuits falstadMenubar;
+//    static VinyasiCircuits vinyasiMenubar;
+//    static Legend legendMenubar;
+//    static AboutDiffEqBox diffEqBox;
+// Mod.End
     static ImportFromDropboxDialog importFromDropboxDialog;
 //    Class dumpTypes[], shortcuts[];
     String shortcuts[];
@@ -259,6 +283,10 @@ MouseOutHandler, MouseWheelHandler {
 	MenuBar fileMenuBar;
 	VerticalPanel verticalPanel;
 	CellPanel buttonPanel;
+// Mod.Begin
+	String file;
+	CellPanel diffEqPanel;
+// Mod.End
 	private boolean mouseDragging;
 	double scopeHeightFraction=0.2;
 	
@@ -325,17 +353,16 @@ MouseOutHandler, MouseWheelHandler {
 //    Circuit applet;
 
     CirSim() {
-//	super("Circuit Simulator v1.6d");
-//	applet = a;
-//	useFrame = false;
 	theSim = this;
     }
 
+// Mod.Begin
+	String titleNobility = "";
+// Mod.End
     String startCircuit = null;
     String startLabel = null;
     String startCircuitText = null;
     String startCircuitLink = null;
-//    String baseURL = "http://www.falstad.com/circuit/";
     
     public void init() {
 
@@ -406,6 +433,11 @@ MouseOutHandler, MouseWheelHandler {
 	  aboutItem=new MenuItem(LS("About"),(Command)null);
 	  fileMenuBar.addItem(aboutItem);
 	  aboutItem.setScheduledCommand(new MyCommand("file","about"));
+// Mod.Begin
+//	  aboutItem=new MenuItem(LS("Differential Equations"),(Command)null);
+//	  fileMenuBar.addItem(aboutItem);
+//	  aboutItem.setScheduledCommand(new MyCommand("file","displayDiffEq"));
+// Mod.End
 	  
 	  int width=(int)RootLayoutPanel.get().getOffsetWidth();
 	  VERTICALPANELWIDTH = width/5;
@@ -420,6 +452,9 @@ MouseOutHandler, MouseWheelHandler {
 	  
 	  // make buttons side by side if there's room
 	  buttonPanel=(VERTICALPANELWIDTH == 166) ? new HorizontalPanel() : new VerticalPanel();
+// Mod.Begin
+	  diffEqPanel=(VERTICALPANELWIDTH == 166) ? new HorizontalPanel() : new VerticalPanel();
+// Mod.End
 	  
 	m = new MenuBar(true);
 	m.addItem(undoItem = menuItemWithShortcut(LS("Undo"), LS("Ctrl-Z"), new MyCommand("edit","undo")));
@@ -509,12 +544,24 @@ MouseOutHandler, MouseWheelHandler {
 	m.addItem(optionsItem = new CheckboxAlignedMenuItem(LS("Other Options..."),
 			new MyCommand("options","other")));
 
+/*
+// Mod.Begin
+
+//	If I were to insert an array for building a menubar loaded
+//	from a plain text file, then I would probably put it here.
+
+	falstadCircuitsList[0][0]
+	vinyasiCircuitsList[0][0]
+	legend[0][0]
+
+// Mod.End
+*/
+
 	mainMenuBar = new MenuBar(true);
 	mainMenuBar.setAutoOpen(true);
 	composeMainMenu(mainMenuBar);
 	composeMainMenu(drawMenuBar);
 
-	  
 	  layoutPanel.addNorth(menuBar, MENUBARHEIGHT);
 	  layoutPanel.addEast(verticalPanel, VERTICALPANELWIDTH);
 	  RootLayoutPanel.get().add(layoutPanel);
@@ -524,8 +571,6 @@ MouseOutHandler, MouseWheelHandler {
 		  RootPanel.get().add(new Label("Not working. You need a browser that supports the CANVAS element."));
 		  return;
 	  }
-	  
-	  
 	  
 	    cvcontext=cv.getContext2d();
 	 backcv=Canvas.createIfSupported();
@@ -546,6 +591,17 @@ MouseOutHandler, MouseWheelHandler {
 			      setSimRunning(!simIsRunning());
 			    }
 			  });
+// Mod.Begin
+		verticalPanel.add(diffEqPanel);
+		diffEqPanel.add(diffEqButton = new Button(LSHTML("Differential&nbsp;Equations")));
+		diffEqButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				aboutDiffEq = new AboutDiffEqBox(titleNobility);
+			}
+		});
+		diffEqButton.setStylePrimaryName("topButton-invisible");
+//		openDiffEqBox("");
+// Mod.End
 		 
 		 /*
 	dumpMatrixButton = new Button("Dump Matrix");
@@ -574,20 +630,17 @@ MouseOutHandler, MouseWheelHandler {
 		    50, 1, 1, 100));
 	setPowerBarEnable();
 	
-//	verticalPanel.add(new Label(""));
-//        Font f = new Font("SansSerif", 0, 10);
         l = new Label(LS("Current Circuit:"));
 	l.addStyleName("topSpace");
-//        l.setFont(f);
         titleLabel = new Label("Label");
-//        titleLabel.setFont(f);
         verticalPanel.add(l);
         verticalPanel.add(titleLabel);
-
 	verticalPanel.add(iFrame = new Frame("iframe.html"));
 	iFrame.setWidth(VERTICALPANELWIDTH+"px");
 	iFrame.setHeight("100 px");
-	iFrame.getElement().setAttribute("scrolling", "no");
+// Mod.Begin
+	iFrame.getElement().setAttribute("scrolling", "yes");
+// Mod.End
 	
 	setGrid();
 	elmList = new Vector<CircuitElm>();
@@ -616,49 +669,49 @@ MouseOutHandler, MouseWheelHandler {
 	scopeMenuBar = buildScopeMenu(false);
 	transScopeMenuBar = buildScopeMenu(true);
 
-// TweakStart
-	
+// Mod.Begin
+
 	if (startCircuitText != null) {
-		getSetupList1(false);
+		getSetupListFalstad(false);
 		readSetup(startCircuitText, true);
 	} else {
 		if (stopMessage == null && startCircuitLink!=null) {
 			readSetup(null, 0, false, true);
-			getSetupList1(false);
+			getSetupListFalstad(false);
 			ImportFromDropboxDialog.setSim(this);
 			ImportFromDropboxDialog.doImportDropboxLink(startCircuitLink, false);
 		} else {
 			readSetup(null, 0, false, true);
 			if (stopMessage == null && startCircuit != null) {
-				getSetupList1(false);
-				readSetupFile1(startCircuit, startLabel, true);
+				getSetupListFalstad(false);
+				readSetupFile(startCircuit, startLabel, true);
 			}
 			else
-				getSetupList1(true);
+				getSetupListFalstad(true);
 		}
 	}
 
 	if (startCircuitText != null) {
-		getSetupList2(false);
+		getSetupListVinyasi(false);
 		readSetup(startCircuitText, true);
 	} else {
 		if (stopMessage == null && startCircuitLink!=null) {
 			readSetup(null, 0, false, true);
-			getSetupList2(false);
+			getSetupListVinyasi(false);
 			ImportFromDropboxDialog.setSim(this);
 			ImportFromDropboxDialog.doImportDropboxLink(startCircuitLink, false);
 		} else {
 			readSetup(null, 0, false, true);
 			if (stopMessage == null && startCircuit != null) {
-				getSetupList2(false);
-				readSetupFile2(startCircuit, startLabel, true);
+				getSetupListVinyasi(false);
+				readSetupFile(startCircuit, startLabel, true);
 			}
 			else
-				getSetupList2(true);
+				getSetupListVinyasi(true);
 		}
 	}
 
-// TweakEnd
+// Mod.End
 	
 		enableUndoRedo();
 		enablePaste();
@@ -679,6 +732,9 @@ MouseOutHandler, MouseWheelHandler {
 		Event.addNativePreviewHandler(this);
 		cv.addMouseWheelHandler(this);
 		setSimRunning(true);
+// Mod.Begin
+//		openDiffEqBox(true);
+// Mod.End
 	    // setup timer
 
 	    timer.scheduleRepeating(FASTTIMER);
@@ -1079,7 +1135,32 @@ MouseOutHandler, MouseWheelHandler {
     	return simRunning;
     }
     
+// Mod.Begin
+
+/*
+
+    public void openDiffEqBox(boolean o) {
+    	if (o) {
+    		DiffEqBoxClosed = true;
+    		diffEqBox = new closeDiffEqBox();
+    		diffEqButton.setHTML(LSHTML("Differential&nbsp;Equations"));
+    		diffEqButton.setStylePrimaryName("topButton");
+    	} else {
+    		aboutDiffEq = new AboutDiffEqBox(titleNobility);
+    		DiffEqBoxClosed = false;
+    		diffEqButton.setHTML(LSHTML("<strong>CLOSE&nbsp;EQUATIONS</strong>"));
+    		diffEqButton.setStylePrimaryName("topButton-red");
+    	}
+    }
     
+    public boolean DiffEqBoxIsClosed() {
+    	return DiffEqBoxClosed;
+    }
+
+*/
+
+// Mod.End
+
 // *****************************************************************
 //                     UPDATE CIRCUIT
     
@@ -2496,6 +2577,10 @@ MouseOutHandler, MouseWheelHandler {
     public void menuPerformed(String menu, String item) {
     	if (item=="about")
     		aboutBox = new AboutBox(circuitjs1.versionString);
+// Mod.Begin
+//    	if (item=="displayDiffEq")
+//    		aboutDiffEq = new AboutDiffEqBox(titleNobility);
+// Mod.End
     	if (item=="importfromlocalfile") {
     		pushUndo();
     		loadFileInput.click();
@@ -2621,21 +2706,17 @@ MouseOutHandler, MouseWheelHandler {
     		//cv.repaint();
     	}
 
-// TweakStart
+// Mod.Begin
 
     	if (menu=="circuits" && item.indexOf("setup ") ==0) {
     		pushUndo();
     		int sp = item.indexOf(' ', 6);
-    		readSetupFile1(item.substring(6, sp), item.substring(sp+1), true);
+    		String tempCircuit = item.substring(6, sp);
+    		String tempTitle = item.substring(sp+1);
+    		readSetupFile(tempCircuit, tempTitle, true);
     	}
-    		
-    	if (menu=="circuits" && item.indexOf("setup ") ==0) {
-    		pushUndo();
-    		int sp = item.indexOf(' ', 7);
-    		readSetupFile2(item.substring(7, sp), item.substring(sp+1), true);
-    	}
-    		
-// TweakEnd
+
+// Mod.End
 
     	//	if (ac.indexOf("setup ") == 0) {
     	//	    pushUndo();
@@ -2826,14 +2907,15 @@ MouseOutHandler, MouseWheelHandler {
 	return dump;
     }
 
-// TweakStart
+// Mod.Begin
 
 // Paul Falstad's list of circuits in its own dropdown menu bar ...
 
-    void getSetupList1(final boolean openDefault) {
+
+    void getSetupListFalstad(final boolean openDefault) {
 
     	String url;
-    	url = GWT.getModuleBaseURL()+"setuplist.txt"+"?v="+random.nextInt(); 
+    	url = GWT.getModuleBaseURL()+"setuplist-p.txt"+"?v="+random.nextInt(); 
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, url);
 		try {
 			requestBuilder.sendRequest(null, new RequestCallback() {
@@ -2845,8 +2927,10 @@ MouseOutHandler, MouseWheelHandler {
 					// processing goes here
 					if (response.getStatusCode()==Response.SC_OK) {
 					String text = response.getText();
-					processSetupList1(text.getBytes(), text.length(), openDefault);
-					// end or processing
+// text.getBytes() -- This is the entire file: setuplist*.txt imported into an array of one character each called 'bytes'
+// text.length() -- This is the length of setuplist*.txt in quantity of characters/bytes
+					processSetupListFalstad(text.getBytes(), text.length(), openDefault);
+					// end of processing
 					}
 					else 
 						GWT.log("Bad file server response:"+response.getStatusText() );
@@ -2856,53 +2940,65 @@ MouseOutHandler, MouseWheelHandler {
 			GWT.log("failed file reading", e);
 		}
     }
-		
-    void processSetupList1(byte b[], int len, final boolean openDefault) {
-    	MenuBar currentMenuBar;
-    	MenuBar stack[] = new MenuBar[6];
-    	int stackptr = 0;
-    	currentMenuBar=new MenuBar(true);
-    	currentMenuBar.setAutoOpen(true);
-    	menuBar.addItem(LS("Falstad.Cts"), currentMenuBar);
-    	stack[stackptr++] = currentMenuBar;
-    	int p;
-    	for (p = 0; p < len; ) {
-    		int l;
-    		for (l = 0; l != len-p; l++)
-    			if (b[l+p] == '\n') {
-    				l++;
-    				break;
-    			}
+
+// b -- This is the entire file: setuplist*.txt imported into an array of one character each called 'bytes'
+// len -- This is the permanent length of setuplist*.txt in quantity of characters/bytes
+    void processSetupListFalstad(byte b[], int len, final boolean openDefault) {
+		MenuBar currentMenuBar;
+		MenuBar stack[] = new MenuBar[6];
+		int stackptr = 0;
+		currentMenuBar=new MenuBar(true);
+		currentMenuBar.setAutoOpen(true);
+		menuBar.addItem(LS("Falstad.Cts"), currentMenuBar);
+// stack{ptr} is in the form of a {tr}ee with {p} as a counter?
+		stack[stackptr++] = currentMenuBar;
+		int p;
+// p -- This is the temporary length of setuplist*.txt in quantity of characters/bytes
+		for (p = 0; p < len; ) {
+			int l;
+			for (l = 0; l != len-p; l++)
+// searching for end of line, ie. carriage return (newline designator)
+				if (b[l+p] == '\n') {
+// 'l' is the position count, forward of p, designating end of current line in setuplist*.txt text
+					l++;
+					break;
+				}
+// 'line' is one whole line of text minus its newline character
     		String line = new String(b, p, l-1);
     		if (line.charAt(0) == '#')
+// Don't do anything because this is a line of comment in a circuit dropdown menu list. Ie, <setuplist.txt>
     			;
     		else if (line.charAt(0) == '+') {
-    		//	MenuBar n = new Menu(line.substring(1));
-    			MenuBar n = new MenuBar(true);
-    			n.setAutoOpen(true);
-    			currentMenuBar.addItem(LS(line.substring(1)),n);
-    			currentMenuBar = stack[stackptr++] = n;
-    		} else if (line.charAt(0) == '-') {
-    			currentMenuBar = stack[--stackptr-1];
-    		} else {
+				MenuBar n = new MenuBar(true);
+				n.setAutoOpen(true);
+				currentMenuBar.addItem(LS(line.substring(1)),n);
+				currentMenuBar = stack[stackptr++] = n;
+			} else if (line.charAt(0) == '-') {
+				currentMenuBar = stack[--stackptr-1];
+			} else {
     			int i = line.indexOf(' ');
     			if (i > 0) {
     				String title = LS(line.substring(i+1));
     				boolean first = false;
-    				if (line.charAt(0) == '>')
+    				if (line.charAt(0) == '>') {
     					first = true;
-    				String file = line.substring(first ? 1 : 0, i);
-    				currentMenuBar.addItem(new MenuItem(title,
-    					new MyCommand("circuits", "setup "+file+" " + title)));
+    				}
+    				file = line.substring(first ? 1 : 0, i);
+					currentMenuBar.addItem(new MenuItem(title,
+// sets up the default circuit that will be wrtten to display
+						new MyCommand("circuits", "setup "+file+" " + title)));
+// load a circuit from URL
     				if (file.equals(startCircuit) && startLabel == null) {
     				    startLabel = title;
     				    titleLabel.setText(title);
     				}
-    				if (first && startCircuit == null) {
+// load a default circuit upon arriving for the first time
+     				if (first && startCircuit == null) {
     					startCircuit = file;
     					startLabel = title;
-    					if (openDefault && stopMessage == null)
-    						readSetupFile1(startCircuit, startLabel, true);
+    					if (openDefault && stopMessage == null) {
+    						readSetupFile(startCircuit, startLabel, true);
+    					}
     				}
     			}
     		}
@@ -2910,12 +3006,13 @@ MouseOutHandler, MouseWheelHandler {
     	}
 }
 
+
 // Vinyasi's list of circuits in its own dropdown menu bar ...
 
-    void getSetupList2(final boolean openDefault) {
+    void getSetupListVinyasi(final boolean openDefault) {
 
     	String url;
-    	url = GWT.getModuleBaseURL()+"setuplist-2nd.txt"+"?v="+random.nextInt(); 
+    	url = GWT.getModuleBaseURL()+"setuplist-v.txt"+"?v="+random.nextInt(); 
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, url);
 		try {
 			requestBuilder.sendRequest(null, new RequestCallback() {
@@ -2927,8 +3024,8 @@ MouseOutHandler, MouseWheelHandler {
 					// processing goes here
 					if (response.getStatusCode()==Response.SC_OK) {
 					String text = response.getText();
-					processSetupList2(text.getBytes(), text.length(), openDefault);
-					// end or processing
+					processSetupListVinyasi(text.getBytes(), text.length(), openDefault);
+					// end of processing
 					}
 					else 
 						GWT.log("Bad file server response:"+response.getStatusText() );
@@ -2939,9 +3036,9 @@ MouseOutHandler, MouseWheelHandler {
 		}
     }
 		
-    void processSetupList2(byte b[], int len, final boolean openDefault) {
+    void processSetupListVinyasi(byte b[], int len, final boolean openDefault) {
     	MenuBar currentMenuBar;
-    	MenuBar stack[] = new MenuBar[7];
+    	MenuBar stack[] = new MenuBar[6];
     	int stackptr = 0;
     	currentMenuBar=new MenuBar(true);
     	currentMenuBar.setAutoOpen(true);
@@ -2971,9 +3068,10 @@ MouseOutHandler, MouseWheelHandler {
     			if (i > 0) {
     				String title = LS(line.substring(i+1));
     				boolean first = false;
-    				if (line.charAt(0) == '>')
+    				if (line.charAt(0) == '>') {
     					first = true;
-    				String file = line.substring(first ? 1 : 0, i);
+    				}
+    				file = line.substring(first ? 1 : 0, i);
     				currentMenuBar.addItem(new MenuItem(title,
     					new MyCommand("circuits", "setup "+file+" " + title)));
     				if (file.equals(startCircuit) && startLabel == null) {
@@ -2983,8 +3081,9 @@ MouseOutHandler, MouseWheelHandler {
     				if (first && startCircuit == null) {
     					startCircuit = file;
     					startLabel = title;
-    					if (openDefault && stopMessage == null)
-    						readSetupFile2(startCircuit, startLabel, true);
+    					if (openDefault && stopMessage == null) {
+    						readSetupFile(startCircuit, startLabel, true);
+    					}
     				}
     			}
     		}
@@ -2992,7 +3091,7 @@ MouseOutHandler, MouseWheelHandler {
     	}
 }
 
-// TweakEnd
+// Mod.End
 
     void readSetup(String text, boolean centre) {
 	readSetup(text, false, centre);
@@ -3004,30 +3103,25 @@ MouseOutHandler, MouseWheelHandler {
 	titleLabel.setText(null);
     }
 
-
-// TweakStart
-
-	void readSetupFile1(String str, String title, boolean centre) {
+// Mod.Begin
+	void readSetupFile(String str, String title, boolean centre) {
+		if ( title.charAt(0) == '@' ) {
+			titleNobility = str;
+			diffEqButton.setStylePrimaryName("topButton");
+		} else {
+			titleNobility = "";
+			diffEqButton.setStylePrimaryName("topButton-invisible");
+		}
+// Mod.End
 		t = 0;
 		System.out.println(str);
 		// TODO: Maybe think about some better approach to cache management!
 		String url=GWT.getModuleBaseURL()+"circuits/"+str+"?v="+random.nextInt(); 
 		loadFileFromURL(url, centre);
-		if (title != null)
+		if (title != null) {
 		    titleLabel.setText(title);
+		}
 	}
-	
-	void readSetupFile2(String str, String title, boolean centre) {
-		t = 0;
-		System.out.println(str);
-		// TODO: Maybe think about some better approach to cache management!
-		String url=GWT.getModuleBaseURL()+"circuits/"+str+"?v="+random.nextInt(); 
-		loadFileFromURL(url, centre);
-		if (title != null)
-		    titleLabel.setText(title);
-	}
-	
-// TweakEnd
 
 	void loadFileFromURL(String url, final boolean centre) {
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, url);
@@ -4134,26 +4228,43 @@ MouseOutHandler, MouseWheelHandler {
 //    public void keyReleased(KeyEvent e) {}
     
     boolean dialogIsShowing() {
-    	if (editDialog!=null && editDialog.isShowing())
+    	if (editDialog!=null && editDialog.isShowing()) {
+			return true;
+		}
+    	if (customLogicEditDialog!=null && customLogicEditDialog.isShowing()) {
+			return true;
+		}
+    	if (exportAsUrlDialog != null && exportAsUrlDialog.isShowing()) {
     		return true;
-    	if (customLogicEditDialog!=null && customLogicEditDialog.isShowing())
-		return true;
-    	if (exportAsUrlDialog != null && exportAsUrlDialog.isShowing())
+    	}
+    	if (exportAsTextDialog != null && exportAsTextDialog.isShowing()) {
     		return true;
-    	if (exportAsTextDialog != null && exportAsTextDialog.isShowing())
-    		return true;
-       	if (exportAsLocalFileDialog != null && exportAsLocalFileDialog.isShowing())
+    	}
+       	if (exportAsLocalFileDialog != null && exportAsLocalFileDialog.isShowing()) {
        		return true;
-    	if (contextPanel!=null && contextPanel.isShowing())
+       	}
+    	if (contextPanel!=null && contextPanel.isShowing()) {
     		return true;
-    	if (scrollValuePopup != null && scrollValuePopup.isShowing())
+    	}
+    	if (scrollValuePopup != null && scrollValuePopup.isShowing()) {
     		return true;
-    	if (aboutBox !=null && aboutBox.isShowing())
+    	}
+    	if (aboutBox !=null && aboutBox.isShowing()) {
     		return true;
-    	if (importFromTextDialog !=null && importFromTextDialog.isShowing())
+    	}
+// Mod.Begin
+    	if (aboutDiffEq !=null && aboutDiffEq.isShowing()) {
     		return true;
-    	if (importFromDropboxDialog != null && importFromDropboxDialog.isShowing())
+    	}
+//    	if (diffEqBox !=null && !(diffEqBox.isShowing()))
+//    		return true;
+// Mod.End
+    	if (importFromTextDialog !=null && importFromTextDialog.isShowing()) {
     		return true;
+    	}
+    	if (importFromDropboxDialog != null && importFromDropboxDialog.isShowing()) {
+    		return true;
+    	}
     	return false;
     }
     
