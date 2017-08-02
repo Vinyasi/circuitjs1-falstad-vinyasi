@@ -2,7 +2,7 @@
     Copyright (C) Paul Falstad and Iain Sharp
     This file is part of CircuitJS1.
 
-    Version 4 by Vinyasi, 31/Jul/2017 9:09
+    Version 4 by Vinyasi, 1/Aug/2017 22:23
 
 // Mod.Begin
 // Mod.End
@@ -353,6 +353,9 @@ MouseOutHandler, MouseWheelHandler {
 //    Circuit applet;
 
     CirSim() {
+//	super("Circuit Simulator v1.6d");
+//	applet = a;
+//	useFrame = false;
 	theSim = this;
     }
 
@@ -363,6 +366,7 @@ MouseOutHandler, MouseWheelHandler {
     String startLabel = null;
     String startCircuitText = null;
     String startCircuitLink = null;
+//    String baseURL = "http://www.falstad.com/circuit/";
     
     public void init() {
 
@@ -593,7 +597,7 @@ MouseOutHandler, MouseWheelHandler {
 			  });
 // Mod.Begin
 		verticalPanel.add(diffEqPanel);
-		diffEqPanel.add(diffEqButton = new Button(LSHTML("Differential&nbsp;Equations")));
+		diffEqPanel.add(diffEqButton = new Button(LSHTML("Trigonometry&nbsp;Function")));
 		diffEqButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				aboutDiffEq = new AboutDiffEqBox(titleNobility);
@@ -630,9 +634,13 @@ MouseOutHandler, MouseWheelHandler {
 		    50, 1, 1, 100));
 	setPowerBarEnable();
 	
+//	verticalPanel.add(new Label(""));
+//        Font f = new Font("SansSerif", 0, 10);
         l = new Label(LS("Current Circuit:"));
 	l.addStyleName("topSpace");
+//        l.setFont(f);
         titleLabel = new Label("Label");
+//        titleLabel.setFont(f);
         verticalPanel.add(l);
         verticalPanel.add(titleLabel);
 	verticalPanel.add(iFrame = new Frame("iframe.html"));
@@ -672,10 +680,12 @@ MouseOutHandler, MouseWheelHandler {
 // Mod.Begin
 
 	if (startCircuitText != null) {
+// entire circuit loads embedded in a long link
 		getSetupListFalstad(false);
 		readSetup(startCircuitText, true);
 	} else {
 		if (stopMessage == null && startCircuitLink!=null) {
+// load circuit from Dropbox
 			readSetup(null, 0, false, true);
 			getSetupListFalstad(false);
 			ImportFromDropboxDialog.setSim(this);
@@ -683,19 +693,23 @@ MouseOutHandler, MouseWheelHandler {
 		} else {
 			readSetup(null, 0, false, true);
 			if (stopMessage == null && startCircuit != null) {
+// load circuit from filename in link
 				getSetupListFalstad(false);
 				readSetupFile(startCircuit, startLabel, true);
 			}
 			else
+// load default circuit
 				getSetupListFalstad(true);
 		}
 	}
 
 	if (startCircuitText != null) {
+// entire circuit loads embedded in a long link
 		getSetupListVinyasi(false);
 		readSetup(startCircuitText, true);
 	} else {
 		if (stopMessage == null && startCircuitLink!=null) {
+// load circuit from Dropbox
 			readSetup(null, 0, false, true);
 			getSetupListVinyasi(false);
 			ImportFromDropboxDialog.setSim(this);
@@ -703,10 +717,12 @@ MouseOutHandler, MouseWheelHandler {
 		} else {
 			readSetup(null, 0, false, true);
 			if (stopMessage == null && startCircuit != null) {
+// load circuit from filename in link
 				getSetupListVinyasi(false);
 				readSetupFile(startCircuit, startLabel, true);
 			}
 			else
+// load default circuit
 				getSetupListVinyasi(true);
 		}
 	}
@@ -2711,11 +2727,9 @@ MouseOutHandler, MouseWheelHandler {
     	if (menu=="circuits" && item.indexOf("setup ") ==0) {
     		pushUndo();
     		int sp = item.indexOf(' ', 6);
-    		String tempCircuit = item.substring(6, sp);
-    		String tempTitle = item.substring(sp+1);
-    		readSetupFile(tempCircuit, tempTitle, true);
+    		readSetupFileTitleNobility(item.substring(6, sp), item.substring(sp+1), true);
     	}
-
+    		
 // Mod.End
 
     	//	if (ac.indexOf("setup ") == 0) {
@@ -2997,7 +3011,7 @@ MouseOutHandler, MouseWheelHandler {
     					startCircuit = file;
     					startLabel = title;
     					if (openDefault && stopMessage == null) {
-    						readSetupFile(startCircuit, startLabel, true);
+    						readSetupFileTitleNobility(startCircuit, startLabel, true);
     					}
     				}
     			}
@@ -3082,7 +3096,7 @@ MouseOutHandler, MouseWheelHandler {
     					startCircuit = file;
     					startLabel = title;
     					if (openDefault && stopMessage == null) {
-    						readSetupFile(startCircuit, startLabel, true);
+    						readSetupFileTitleNobility(startCircuit, startLabel, true);
     					}
     				}
     			}
@@ -3104,7 +3118,8 @@ MouseOutHandler, MouseWheelHandler {
     }
 
 // Mod.Begin
-	void readSetupFile(String str, String title, boolean centre) {
+
+	void readSetupFileTitleNobility(String str, String title, boolean centre) {
 		if ( title.charAt(0) == '@' ) {
 			titleNobility = str;
 			diffEqButton.setStylePrimaryName("topButton");
@@ -3112,7 +3127,6 @@ MouseOutHandler, MouseWheelHandler {
 			titleNobility = "";
 			diffEqButton.setStylePrimaryName("topButton-invisible");
 		}
-// Mod.End
 		t = 0;
 		System.out.println(str);
 		// TODO: Maybe think about some better approach to cache management!
@@ -3122,6 +3136,19 @@ MouseOutHandler, MouseWheelHandler {
 		    titleLabel.setText(title);
 		}
 	}
+
+	void readSetupFile(String str, String title, boolean centre) {
+		t = 0;
+		System.out.println(str);
+		// TODO: Maybe think about some better approach to cache management!
+		String url=GWT.getModuleBaseURL()+"circuits/"+str+"?v="+random.nextInt(); 
+		loadFileFromURL(url, centre);
+		if (title != null) {
+		    titleLabel.setText(title);
+		}
+	}
+
+// Mod.End
 
 	void loadFileFromURL(String url, final boolean centre) {
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, url);
