@@ -15,7 +15,7 @@ http://vinyasi.info/
 Added an image to the 'About' popup box to brand my site:
 http://vinyasi.info/circuitjs1/immortality-25pc.jpg
 
-And added a 'Differential Equations' button to the upper right-hand corner of the simulator for a few circuits whose mathematical functions -- capable of plotting their waveforms -- has been reverse engineered, or hypothesized, from their oscilloscope readouts.
+And added a 'Trigonometry Function' button to the upper right-hand corner of the simulator for a few circuits whose mathematical functions -- capable of plotting their waveforms -- has been reverse engineered, or hypothesized, from their oscilloscope readouts.
 
 See, Mathlets' Poles and Vibrations:
 http://mathlets.org/mathlets/poles-and-vibrations/
