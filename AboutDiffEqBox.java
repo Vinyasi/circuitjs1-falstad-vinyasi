@@ -53,7 +53,7 @@ public class AboutDiffEqBox extends PopupPanel {
 			setWidget(vp);
 			vp.setWidth("540px");
 			vp.add(new HTML("<iframe src='http://vinyasi.info/circuitjs1/graphs/" + diffEqFile + "_.html' width='570' height='510'></iframe>"));
-			vp.add(okButton = new Button("OK"));
+			vp.add(okButton = new Button("CLOSE&nbsp;THIS&nbsp;WINDOW"));
 			okButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					close();
