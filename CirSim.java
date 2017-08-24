@@ -2,7 +2,7 @@
     Copyright (C) Paul Falstad and Iain Sharp
     This file is part of CircuitJS1.
 
-    Version 4 by Vinyasi, 1/Aug/2017 22:23
+    Version 4 by Vinyasi, 23/Aug/2017 17:12
 
 // Mod.Begin
 // Mod.End
@@ -597,7 +597,7 @@ MouseOutHandler, MouseWheelHandler {
 			  });
 // Mod.Begin
 		verticalPanel.add(diffEqPanel);
-		diffEqPanel.add(diffEqButton = new Button(LSHTML("Trigonometry&nbsp;Function")));
+		diffEqPanel.add(diffEqButton = new Button(LSHTML("More&nbsp;Information")));
 		diffEqButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				aboutDiffEq = new AboutDiffEqBox(titleNobility);
