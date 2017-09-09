@@ -2,7 +2,9 @@
     Copyright (C) Paul Falstad and Iain Sharp
     This file is part of CircuitJS1.
 
-    Version 4 by Vinyasi, 23/Aug/2017 17:12
+    Version 4 by Vinyasi, 9/Sep/2017 11:33
+    BTW, 'Differential Equations' button has had its name changed
+    to 'More Information'.
 
 // Mod.Begin
 // Mod.End
@@ -284,6 +286,7 @@ MouseOutHandler, MouseWheelHandler {
 	VerticalPanel verticalPanel;
 	CellPanel buttonPanel;
 // Mod.Begin
+//	boolean firstNobility = false;
 	String file;
 	CellPanel diffEqPanel;
 // Mod.End
@@ -597,7 +600,7 @@ MouseOutHandler, MouseWheelHandler {
 			  });
 // Mod.Begin
 		verticalPanel.add(diffEqPanel);
-		diffEqPanel.add(diffEqButton = new Button(LSHTML("More&nbsp;Information")));
+		diffEqPanel.add(diffEqButton = new Button(LSHTML("Circuit&nbsp;Information")));
 		diffEqButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				aboutDiffEq = new AboutDiffEqBox(titleNobility);
@@ -694,8 +697,7 @@ MouseOutHandler, MouseWheelHandler {
 			readSetup(null, 0, false, true);
 			if (stopMessage == null && startCircuit != null) {
 // load circuit from filename in link
-				getSetupListFalstad(false);
-				readSetupFile(startCircuit, startLabel, true);
+				getSetupListFalstad(true);
 			}
 			else
 // load default circuit
@@ -718,8 +720,7 @@ MouseOutHandler, MouseWheelHandler {
 			readSetup(null, 0, false, true);
 			if (stopMessage == null && startCircuit != null) {
 // load circuit from filename in link
-				getSetupListVinyasi(false);
-				readSetupFile(startCircuit, startLabel, true);
+				getSetupListVinyasi(true);
 			}
 			else
 // load default circuit
@@ -2996,15 +2997,16 @@ MouseOutHandler, MouseWheelHandler {
     				boolean first = false;
     				if (line.charAt(0) == '>') {
     					first = true;
-    				}
-    				file = line.substring(first ? 1 : 0, i);
+					}
+					file = line.substring(first ? 1 : 0, i);
 					currentMenuBar.addItem(new MenuItem(title,
-// sets up the default circuit that will be wrtten to display
+// sets up the default circuit that will be written to display
 						new MyCommand("circuits", "setup "+file+" " + title)));
 // load a circuit from URL
-    				if (file.equals(startCircuit) && startLabel == null) {
+    				if (file.equals(startCircuit)) {
     				    startLabel = title;
     				    titleLabel.setText(title);
+   						readSetupFileTitleNobility(startCircuit, startLabel, true);
     				}
 // load a default circuit upon arriving for the first time
      				if (first && startCircuit == null) {
@@ -3084,13 +3086,14 @@ MouseOutHandler, MouseWheelHandler {
     				boolean first = false;
     				if (line.charAt(0) == '>') {
     					first = true;
-    				}
-    				file = line.substring(first ? 1 : 0, i);
+					}
+					file = line.substring(first ? 1 : 0, i);
     				currentMenuBar.addItem(new MenuItem(title,
     					new MyCommand("circuits", "setup "+file+" " + title)));
-    				if (file.equals(startCircuit) && startLabel == null) {
+    				if (file.equals(startCircuit)) {
     				    startLabel = title;
     				    titleLabel.setText(title);
+   						readSetupFileTitleNobility(startCircuit, startLabel, true);
     				}
     				if (first && startCircuit == null) {
     					startCircuit = file;
