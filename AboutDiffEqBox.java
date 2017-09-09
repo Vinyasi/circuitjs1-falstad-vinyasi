@@ -1,6 +1,8 @@
 /*    
     Copyright (C) Paul Falstad and Iain Sharp
-    Added to Version 4 by Vinyasi on 31/Jul/2017 9:20
+    Added to Version 4 and modified by Vinyasi on 5/Sep/2017 10:00
+    BTW, 'Differential Equations' button has had its name changed
+    to 'More Information'.
 
     This file is part of Vinyasi's port of CircuitJS1 specializing in
     Surge Circuits exhibiting Pure Resonance. See, Prof. Arthur Mattuck
@@ -52,6 +54,7 @@ public class AboutDiffEqBox extends PopupPanel {
 			vp = new VerticalPanel();
 			setWidget(vp);
 			vp.setWidth("540px");
+// image limits are 530 = width versus 470 = height
 			vp.add(new HTML("<iframe src='http://vinyasi.info/circuitjs1/graphs/" + diffEqFile + "_.html' width='570' height='510'></iframe>"));
 			vp.add(okButton = new Button("CLOSE&nbsp;THIS&nbsp;WINDOW"));
 			okButton.addClickHandler(new ClickHandler() {
