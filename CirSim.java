@@ -3,8 +3,8 @@
     This file is part of CircuitJS1.
 
     Version 4 by Vinyasi, 10/Sep/2017 11:57
-    BTW, 'Differential Equations' button has had its name changed
-    to 'More Information'.
+    BTW, 'Differential&nbsp;Equations' button has had its name changed
+    to 'Circuit&nbsp;Information'.
 
 // Mod.Begin
 // Mod.End
