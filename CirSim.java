@@ -2,7 +2,7 @@
     Copyright (C) Paul Falstad and Iain Sharp
     This file is part of CircuitJS1.
 
-    Version 4 by Vinyasi, 9/Sep/2017 11:33
+    Version 4 by Vinyasi, 10/Sep/2017 11:57
     BTW, 'Differential Equations' button has had its name changed
     to 'More Information'.
 
@@ -122,6 +122,9 @@ MouseOutHandler, MouseWheelHandler {
 // Mod.End
     Button dumpMatrixButton;
     MenuItem aboutItem;
+// Mod.Begin
+    MenuItem legendItem;
+// Mod.End
     MenuItem importFromLocalFileItem, importFromTextItem,
     	exportAsUrlItem, exportAsLocalFileItem, exportAsTextItem;
     MenuItem importFromDropboxItem;
@@ -242,9 +245,6 @@ MouseOutHandler, MouseWheelHandler {
     RowInfo circuitRowInfo[];
     int circuitPermute[];
     boolean simRunning;
-// Mod.Begin
-//    boolean DiffEqBoxClosed;
-// Mod.End
     boolean circuitNonLinear;
     int voltageSourceCount;
     int circuitMatrixSize, circuitMatrixFullSize;
@@ -264,11 +264,10 @@ MouseOutHandler, MouseWheelHandler {
     static ScrollValuePopup scrollValuePopup;
     static AboutBox aboutBox;
 // Mod.Begin
+	static LegendBox legendBox;
     static AboutDiffEqBox aboutDiffEq;
 //    static FalstadCircuits falstadMenubar;
 //    static VinyasiCircuits vinyasiMenubar;
-//    static Legend legendMenubar;
-//    static AboutDiffEqBox diffEqBox;
 // Mod.End
     static ImportFromDropboxDialog importFromDropboxDialog;
 //    Class dumpTypes[], shortcuts[];
@@ -286,7 +285,6 @@ MouseOutHandler, MouseWheelHandler {
 	VerticalPanel verticalPanel;
 	CellPanel buttonPanel;
 // Mod.Begin
-//	boolean firstNobility = false;
 	String file;
 	CellPanel diffEqPanel;
 // Mod.End
@@ -437,14 +435,14 @@ MouseOutHandler, MouseWheelHandler {
 	  exportToDropboxItem.setEnabled(ExportToDropbox.isSupported());
 	  fileMenuBar.addItem(exportToDropboxItem);
 	  fileMenuBar.addSeparator();
-	  aboutItem=new MenuItem(LS("About"),(Command)null);
+// Mod.Begin
+	  legendItem=new MenuItem(LS("Legend of Symbols"),(Command)null);
+	  fileMenuBar.addItem(legendItem);
+	  legendItem.setScheduledCommand(new MyCommand("file","legend"));
+// Mod.End
+	  aboutItem=new MenuItem(LS("About this Software"),(Command)null);
 	  fileMenuBar.addItem(aboutItem);
 	  aboutItem.setScheduledCommand(new MyCommand("file","about"));
-// Mod.Begin
-//	  aboutItem=new MenuItem(LS("Differential Equations"),(Command)null);
-//	  fileMenuBar.addItem(aboutItem);
-//	  aboutItem.setScheduledCommand(new MyCommand("file","displayDiffEq"));
-// Mod.End
 	  
 	  int width=(int)RootLayoutPanel.get().getOffsetWidth();
 	  VERTICALPANELWIDTH = width/5;
@@ -559,7 +557,6 @@ MouseOutHandler, MouseWheelHandler {
 
 	falstadCircuitsList[0][0]
 	vinyasiCircuitsList[0][0]
-	legend[0][0]
 
 // Mod.End
 */
@@ -607,10 +604,9 @@ MouseOutHandler, MouseWheelHandler {
 			}
 		});
 		diffEqButton.setStylePrimaryName("topButton-invisible");
-//		openDiffEqBox("");
 // Mod.End
 		 
-		 /*
+/*
 	dumpMatrixButton = new Button("Dump Matrix");
 	dumpMatrixButton.addClickHandler(new ClickHandler() {
 	    public void onClick(ClickEvent event) { dumpMatrix = true; }});
@@ -686,44 +682,32 @@ MouseOutHandler, MouseWheelHandler {
 // entire circuit loads embedded in a long link
 		getSetupListFalstad(false);
 		readSetup(startCircuitText, true);
+		getSetupListVinyasi(false);
+		readSetup(startCircuitText, true);
 	} else {
-		if (stopMessage == null && startCircuitLink!=null) {
 // load circuit from Dropbox
+		if (stopMessage == null && startCircuitLink!=null) {
 			readSetup(null, 0, false, true);
 			getSetupListFalstad(false);
 			ImportFromDropboxDialog.setSim(this);
 			ImportFromDropboxDialog.doImportDropboxLink(startCircuitLink, false);
-		} else {
-			readSetup(null, 0, false, true);
-			if (stopMessage == null && startCircuit != null) {
-// load circuit from filename in link
-				getSetupListFalstad(true);
-			}
-			else
-// load default circuit
-				getSetupListFalstad(true);
-		}
-	}
-
-	if (startCircuitText != null) {
-// entire circuit loads embedded in a long link
-		getSetupListVinyasi(false);
-		readSetup(startCircuitText, true);
-	} else {
-		if (stopMessage == null && startCircuitLink!=null) {
-// load circuit from Dropbox
 			readSetup(null, 0, false, true);
 			getSetupListVinyasi(false);
 			ImportFromDropboxDialog.setSim(this);
 			ImportFromDropboxDialog.doImportDropboxLink(startCircuitLink, false);
 		} else {
+// load circuit from filename in link
 			readSetup(null, 0, false, true);
 			if (stopMessage == null && startCircuit != null) {
-// load circuit from filename in link
+				getSetupListFalstad(true);
+			}
+			readSetup(null, 0, false, true);
+			if (stopMessage == null && startCircuit != null) {
 				getSetupListVinyasi(true);
 			}
 			else
 // load default circuit
+				getSetupListFalstad(true);
 				getSetupListVinyasi(true);
 		}
 	}
@@ -749,10 +733,8 @@ MouseOutHandler, MouseWheelHandler {
 		Event.addNativePreviewHandler(this);
 		cv.addMouseWheelHandler(this);
 		setSimRunning(true);
-// Mod.Begin
-//		openDiffEqBox(true);
-// Mod.End
-	    // setup timer
+
+// setup timer
 
 	    timer.scheduleRepeating(FASTTIMER);
 	  
@@ -1152,32 +1134,6 @@ MouseOutHandler, MouseWheelHandler {
     	return simRunning;
     }
     
-// Mod.Begin
-
-/*
-
-    public void openDiffEqBox(boolean o) {
-    	if (o) {
-    		DiffEqBoxClosed = true;
-    		diffEqBox = new closeDiffEqBox();
-    		diffEqButton.setHTML(LSHTML("Differential&nbsp;Equations"));
-    		diffEqButton.setStylePrimaryName("topButton");
-    	} else {
-    		aboutDiffEq = new AboutDiffEqBox(titleNobility);
-    		DiffEqBoxClosed = false;
-    		diffEqButton.setHTML(LSHTML("<strong>CLOSE&nbsp;EQUATIONS</strong>"));
-    		diffEqButton.setStylePrimaryName("topButton-red");
-    	}
-    }
-    
-    public boolean DiffEqBoxIsClosed() {
-    	return DiffEqBoxClosed;
-    }
-
-*/
-
-// Mod.End
-
 // *****************************************************************
 //                     UPDATE CIRCUIT
     
@@ -2590,14 +2546,13 @@ MouseOutHandler, MouseWheelHandler {
     	    t=0;
     }
     
-    
     public void menuPerformed(String menu, String item) {
+// Mod.Begin
+    	if (item=="legend")
+    		legendBox = new LegendBox();
+// Mod.End
     	if (item=="about")
     		aboutBox = new AboutBox(circuitjs1.versionString);
-// Mod.Begin
-//    	if (item=="displayDiffEq")
-//    		aboutDiffEq = new AboutDiffEqBox(titleNobility);
-// Mod.End
     	if (item=="importfromlocalfile") {
     		pushUndo();
     		loadFileInput.click();
@@ -3121,7 +3076,7 @@ MouseOutHandler, MouseWheelHandler {
     }
 
 // Mod.Begin
-
+//	void readSetupFile(String str, String title, boolean centre) {
 	void readSetupFileTitleNobility(String str, String title, boolean centre) {
 		if ( title.charAt(0) == '@' ) {
 			titleNobility = str;
@@ -3130,28 +3085,16 @@ MouseOutHandler, MouseWheelHandler {
 			titleNobility = "";
 			diffEqButton.setStylePrimaryName("topButton-invisible");
 		}
-		t = 0;
-		System.out.println(str);
-		// TODO: Maybe think about some better approach to cache management!
-		String url=GWT.getModuleBaseURL()+"circuits/"+str+"?v="+random.nextInt(); 
-		loadFileFromURL(url, centre);
-		if (title != null) {
-		    titleLabel.setText(title);
-		}
-	}
-
-	void readSetupFile(String str, String title, boolean centre) {
-		t = 0;
-		System.out.println(str);
-		// TODO: Maybe think about some better approach to cache management!
-		String url=GWT.getModuleBaseURL()+"circuits/"+str+"?v="+random.nextInt(); 
-		loadFileFromURL(url, centre);
-		if (title != null) {
-		    titleLabel.setText(title);
-		}
-	}
-
 // Mod.End
+		t = 0;
+		System.out.println(str);
+		// TODO: Maybe think about some better approach to cache management!
+		String url=GWT.getModuleBaseURL()+"circuits/"+str+"?v="+random.nextInt(); 
+		loadFileFromURL(url, centre);
+		if (title != null) {
+		    titleLabel.setText(title);
+		}
+	}
 
 	void loadFileFromURL(String url, final boolean centre) {
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, url);
@@ -4286,8 +4229,9 @@ MouseOutHandler, MouseWheelHandler {
     	if (aboutDiffEq !=null && aboutDiffEq.isShowing()) {
     		return true;
     	}
-//    	if (diffEqBox !=null && !(diffEqBox.isShowing()))
-//    		return true;
+    	if (legendBox !=null && legendBox.isShowing()) {
+    		return true;
+    	}
 // Mod.End
     	if (importFromTextDialog !=null && importFromTextDialog.isShowing()) {
     		return true;
