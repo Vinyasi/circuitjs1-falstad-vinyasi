@@ -2,9 +2,9 @@
     Copyright (C) Paul Falstad and Iain Sharp
     This file is part of CircuitJS1.
 
-    Version 4 by Vinyasi, 10/Sep/2017 11:57
-    BTW, 'Differential&nbsp;Equations' button has had its name changed
-    to 'Circuit&nbsp;Information'.
+    Version 4 by Vinyasi, 13/Sep/2017 8:14
+    BTW, 'Differential Equations' button has had its name changed
+    to 'Circuit Information'.
 
 // Mod.Begin
 // Mod.End
@@ -109,6 +109,11 @@ public class CirSim implements MouseDownHandler, MouseMoveHandler, MouseUpHandle
 ClickHandler, DoubleClickHandler, ContextMenuHandler, NativePreviewHandler,
 MouseOutHandler, MouseWheelHandler {
     
+// Mod.Begin
+// subiterCount = 5000 is default for 'Convergence failed' error messages
+int fiveKSubiter = 30000;
+// Mod.End
+
     Random random;
     
     public static final int sourceRadius = 7;
@@ -2394,7 +2399,9 @@ MouseOutHandler, MouseWheelHandler {
 		ce.startIteration();
 	    }
 	    steps++;
-	    final int subiterCount = 5000;
+// Mod.Begin
+	    final int subiterCount = fiveKSubiter; // 5000;
+// Mod.End
 	    for (subiter = 0; subiter != subiterCount; subiter++) {
 		converged = true;
 		subIterations = subiter;
