@@ -2,7 +2,7 @@
     Copyright (C) Paul Falstad and Iain Sharp
     This file is part of CircuitJS1.
 
-    Version 4 by Vinyasi, 13/Sep/2017 8:14
+    Version 4 by Vinyasi, 18/Sep/2017 12:28
     BTW, 'Differential Equations' button has had its name changed
     to 'Circuit Information'.
 
@@ -111,7 +111,7 @@ MouseOutHandler, MouseWheelHandler {
     
 // Mod.Begin
 // subiterCount = 5000 is default for 'Convergence failed' error messages
-int fiveKSubiter = 30000;
+int fiveKSubiter = 20000;
 // Mod.End
 
     Random random;
@@ -687,17 +687,11 @@ int fiveKSubiter = 30000;
 // entire circuit loads embedded in a long link
 		getSetupListFalstad(false);
 		readSetup(startCircuitText, true);
-		getSetupListVinyasi(false);
-		readSetup(startCircuitText, true);
 	} else {
 // load circuit from Dropbox
 		if (stopMessage == null && startCircuitLink!=null) {
 			readSetup(null, 0, false, true);
 			getSetupListFalstad(false);
-			ImportFromDropboxDialog.setSim(this);
-			ImportFromDropboxDialog.doImportDropboxLink(startCircuitLink, false);
-			readSetup(null, 0, false, true);
-			getSetupListVinyasi(false);
 			ImportFromDropboxDialog.setSim(this);
 			ImportFromDropboxDialog.doImportDropboxLink(startCircuitLink, false);
 		} else {
@@ -706,13 +700,31 @@ int fiveKSubiter = 30000;
 			if (stopMessage == null && startCircuit != null) {
 				getSetupListFalstad(true);
 			}
+			else
+// load default circuit
+				getSetupListFalstad(true);
+		}
+	}
+
+	if (startCircuitText != null) {
+// entire circuit loads embedded in a long link
+		getSetupListVinyasi(false);
+		readSetup(startCircuitText, true);
+	} else {
+// load circuit from Dropbox
+		if (stopMessage == null && startCircuitLink!=null) {
+			readSetup(null, 0, false, true);
+			getSetupListVinyasi(false);
+			ImportFromDropboxDialog.setSim(this);
+			ImportFromDropboxDialog.doImportDropboxLink(startCircuitLink, false);
+		} else {
+// load circuit from filename in link
 			readSetup(null, 0, false, true);
 			if (stopMessage == null && startCircuit != null) {
 				getSetupListVinyasi(true);
 			}
 			else
 // load default circuit
-				getSetupListFalstad(true);
 				getSetupListVinyasi(true);
 		}
 	}
