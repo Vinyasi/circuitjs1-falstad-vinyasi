@@ -2,7 +2,7 @@
     Copyright (C) Paul Falstad and Iain Sharp
     This file is part of CircuitJS1.
 
-    Version 4 by Vinyasi, 18/Sep/2017 12:28
+    Version 4 by Vinyasi, 25/Sep/2017 20:56
     BTW, 'Differential Equations' button has had its name changed
     to 'Circuit Information'.
 
@@ -111,7 +111,7 @@ MouseOutHandler, MouseWheelHandler {
     
 // Mod.Begin
 // subiterCount = 5000 is default for 'Convergence failed' error messages
-int fiveKSubiter = 20000;
+int fiveKSubiter = 15000;
 // Mod.End
 
     Random random;
