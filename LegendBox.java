@@ -1,6 +1,6 @@
 /*    
     Copyright (C) Paul Falstad and Iain Sharp
-    Added to Version 4 by Vinyasi on 10/Sep/2017 7:46
+    Added to Version 4 by Vinyasi on 30/Oct/2017 15:32
 
 // Mod.Begin
 // Mod.End
@@ -58,17 +58,17 @@ public class LegendBox extends PopupPanel {
 		"Circuit to Indicate ...</span></p>" +
 		"<p><b><big><big>&Theta;</big></big> 90&deg; Phase Relation</b> &ndash; Amperage is Out of Phase with Voltage " +
 		"by Ninety Degrees.</p>" +
-		"<p><b><big><big><big><big>*</big></big></big></big> Mild Negative Resistance</b> &ndash; Mild Change in either Amperage or Voltage " +
+		"<p><b><big><big><big><big>*</big></big></big></big> Mild Reciprocal Resistance</b> &ndash; Mild Change in either Amperage or Voltage " +
 		"on the Oscilloscope.</p>" +
 // SNOWFLAKE UNICODE
 // &# 10052 ;
 // REMOVE THE TWO SPACES TO CREATE THIS SYMBOL
-		"<p><b><big>&#10052;</big> Distinct Negative Resistance</b> &ndash; Sharp Change in either Amperage or " +
+		"<p><b><big>&#10052;</big> Distinct Reciprocal Resistance</b> &ndash; Sharp Change in either Amperage or " +
 		"Voltage on the Oscilloscope.</p>" +
 		"<p><b><big><big><big><big>&infin;</big></big></big></big> Output Exceeds Input</b> &ndash; Overunity and Free " +
 		"Energy.</p>" +
-		"<p><b><big><big>#</big></big> Instaneous KABOOM!</b> &ndash; Surge Circuits which Rise to Infinite Gain VERY " +
-		"Quickly.</p>" +
+		"<p><b><big><big>#</big></big> Instantaneous KABOOM!</b> &ndash; Surge Circuits which Rise to Infinite Gain " +
+		"VERY Quickly.</p>" +
 		"<p><b><big>@</big> Circuit Information</b> &ndash; Button in the Upper Right-Hand Corner for some " +
 		"Circuits.</p><br />"));
 
