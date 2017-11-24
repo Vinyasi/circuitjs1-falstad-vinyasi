@@ -144,7 +144,7 @@ import com.google.gwt.canvas.dom.client.CanvasGradient;
 		}
 	    if (n == 1) {
 			EditInfo ei = new EditInfo("", 0, -1, -1);
-			ei.checkbox = new Checkbox("Reciprocal Ohm vs Mho", isReciprocalResistance());
+			ei.checkbox = new Checkbox("Ohm vs Reciprocal Mho", isReciprocalResistance());
 			return ei;
 		}
 // Mod.End
