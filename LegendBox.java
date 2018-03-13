@@ -1,6 +1,6 @@
 /*    
     Copyright (C) Paul Falstad and Iain Sharp
-    Added to Version 4 by Vinyasi on 30/Oct/2017 15:32
+    Added to Version 4 by Vinyasi on 11/Mar/2018 23:11
 
 // Mod.Begin
 // Mod.End
@@ -70,7 +70,9 @@ public class LegendBox extends PopupPanel {
 		"<p><b><big><big>#</big></big> Instantaneous KABOOM!</b> &ndash; Surge Circuits which Rise to Infinite Gain " +
 		"VERY Quickly.</p>" +
 		"<p><b><big>@</big> Circuit Information</b> &ndash; Button in the Upper Right-Hand Corner for some " +
-		"Circuits.</p><br />"));
+		"Circuits.</p>" +
+		"<p><b><big>%</big> Circuit Information</b> &ndash; With a Larger Window.</p>" +
+		"<br />"));
 
 		vp.add(okButton = new Button("CLOSE&nbsp;THIS&nbsp;WINDOW"));
 		okButton.addClickHandler(new ClickHandler() {

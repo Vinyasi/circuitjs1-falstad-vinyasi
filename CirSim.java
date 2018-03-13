@@ -2,7 +2,7 @@
     Copyright (C) Paul Falstad and Iain Sharp
     This file is part of CircuitJS1.
 
-    Version 4 by Vinyasi, 25/Sep/2017 20:56
+    Version 4 by Vinyasi, 11/Mar/2018 23:11
     BTW, 'Differential Equations' button has had its name changed
     to 'Circuit Information'.
 
@@ -109,11 +109,6 @@ public class CirSim implements MouseDownHandler, MouseMoveHandler, MouseUpHandle
 ClickHandler, DoubleClickHandler, ContextMenuHandler, NativePreviewHandler,
 MouseOutHandler, MouseWheelHandler {
     
-// Mod.Begin
-// subiterCount = 5000 is default for 'Convergence failed' error messages
-int fiveKSubiter = 15000;
-// Mod.End
-
     Random random;
     
     public static final int sourceRadius = 7;
@@ -367,6 +362,7 @@ int fiveKSubiter = 15000;
 
 // Mod.Begin
 	String titleNobility = "";
+	String titleNobilitySize = "small";
 // Mod.End
     String startCircuit = null;
     String startLabel = null;
@@ -605,7 +601,7 @@ int fiveKSubiter = 15000;
 		diffEqPanel.add(diffEqButton = new Button(LSHTML("Circuit&nbsp;Information")));
 		diffEqButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				aboutDiffEq = new AboutDiffEqBox(titleNobility);
+				aboutDiffEq = new AboutDiffEqBox(titleNobility, titleNobilitySize);
 			}
 		});
 		diffEqButton.setStylePrimaryName("topButton-invisible");
@@ -2411,9 +2407,7 @@ int fiveKSubiter = 15000;
 		ce.startIteration();
 	    }
 	    steps++;
-// Mod.Begin
-	    final int subiterCount = fiveKSubiter; // 5000;
-// Mod.End
+	    final int subiterCount = 5000;
 	    for (subiter = 0; subiter != subiterCount; subiter++) {
 		converged = true;
 		subIterations = subiter;
@@ -3099,9 +3093,15 @@ int fiveKSubiter = 15000;
 	void readSetupFileTitleNobility(String str, String title, boolean centre) {
 		if ( title.charAt(0) == '@' ) {
 			titleNobility = str;
+			titleNobilitySize = "small";
+			diffEqButton.setStylePrimaryName("topButton");
+		} else if ( title.charAt(0) == '%' ) {
+			titleNobility = str;
+			titleNobilitySize = "large";
 			diffEqButton.setStylePrimaryName("topButton");
 		} else {
 			titleNobility = "";
+			titleNobilitySize = "";
 			diffEqButton.setStylePrimaryName("topButton-invisible");
 		}
 // Mod.End

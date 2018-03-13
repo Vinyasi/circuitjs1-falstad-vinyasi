@@ -1,6 +1,6 @@
 /*    
     Copyright (C) Paul Falstad and Iain Sharp
-    Added to Version 4 and modified by Vinyasi on 5/Sep/2017 10:00
+    Added to Version 4 and modified by Vinyasi on 11/Mar/2018 23:11
     BTW, 'Differential Equations' button has had its name changed
     to 'More Information'.
 
@@ -46,16 +46,22 @@ import com.google.gwt.user.client.ui.Button;
 public class AboutDiffEqBox extends PopupPanel {
 	VerticalPanel vp;
 	Button okButton;
-	AboutDiffEqBox(String diffEqFile) {
+	AboutDiffEqBox(String diffEqFile, String size) {
 		super();
 		if (diffEqFile == "" || diffEqFile == null) {
 			return;
 		} else {
 			vp = new VerticalPanel();
 			setWidget(vp);
-			vp.setWidth("540px");
+			if (size == "small") {
+				vp.setWidth("540px");
 // image limits are 530 = width versus 470 = height
-			vp.add(new HTML("<iframe src='http://vinyasi.info/circuitjs1/graphs/" + diffEqFile + "_.html' width='570' height='510'></iframe>"));
+				vp.add(new HTML("<iframe src='circuitjs1/graphs/" + diffEqFile + "_.html' width='570' height='510'></iframe>"));
+			} else if (size == "large") {
+				vp.setWidth("1210px");
+// image limits are 1200 = width versus 800 = height
+				vp.add(new HTML("<iframe src='circuitjs1/graphs/" + diffEqFile + "_.html' width='1240' height='840'></iframe>"));
+			}
 			vp.add(okButton = new Button("CLOSE&nbsp;THIS&nbsp;WINDOW"));
 			okButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
